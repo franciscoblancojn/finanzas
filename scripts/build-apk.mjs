@@ -2,7 +2,6 @@ import { execSync } from 'child_process';
 import { existsSync, copyFileSync, mkdirSync, writeFileSync, readFileSync, chmodSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { deflateSync } from 'zlib';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '..');
@@ -38,67 +37,10 @@ mkdirSync(ASSETS_DIR, { recursive: true });
 copyFileSync(HTML_SRC, HTML_DST);
 log(`Copied to ${HTML_DST}`);
 
-// Step 3: Generate app icon (simple PNGs at multiple densities)
+// Step 3: Generate app icon (resize public/icon.png to multiple densities)
 log('Generating app icons...');
 
-function createPNG(width, height, r, g, b) {
-  const rawData = Buffer.alloc(height * (width * 4 + 1));
-  const radius = width * 0.2;
-  for (let y = 0; y < height; y++) {
-    rawData[y * (width * 4 + 1)] = 0;
-    for (let x = 0; x < width; x++) {
-      const offset = y * (width * 4 + 1) + 1 + x * 4;
-      const dx = x < radius ? radius - x : (x > width - radius - 1 ? x - (width - radius - 1) : 0);
-      const dy = y < radius ? radius - y : (y > height - radius - 1 ? y - (height - radius - 1) : 0);
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist > radius) {
-        rawData[offset] = 0;
-        rawData[offset + 1] = 0;
-        rawData[offset + 2] = 0;
-        rawData[offset + 3] = 0;
-      } else {
-        const t = y / height;
-        rawData[offset] = Math.round(r + (r * 0.15) * (1 - t));
-        rawData[offset + 1] = Math.round(g + (g * 0.2) * (1 - t));
-        rawData[offset + 2] = Math.round(b + (b * 0.25) * (1 - t));
-        rawData[offset + 3] = 255;
-      }
-    }
-  }
-  const deflated = deflateSync(rawData);
-  const chunks = [];
-  chunks.push(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]));
-  const ihdr = Buffer.alloc(13);
-  ihdr.writeUInt32BE(width, 0);
-  ihdr.writeUInt32BE(height, 4);
-  ihdr[8] = 8; ihdr[9] = 6; ihdr[10] = 0; ihdr[11] = 0; ihdr[12] = 0;
-  chunks.push(createChunk('IHDR', ihdr));
-  chunks.push(createChunk('IDAT', deflated));
-  chunks.push(createChunk('IEND', Buffer.alloc(0)));
-  return Buffer.concat(chunks);
-}
-
-function createChunk(type, data) {
-  const length = Buffer.alloc(4);
-  length.writeUInt32BE(data.length, 0);
-  const typeBuffer = Buffer.from(type, 'ascii');
-  const crcData = Buffer.concat([typeBuffer, data]);
-  const crc = crc32Buffer(crcData);
-  const crcBuffer = Buffer.alloc(4);
-  crcBuffer.writeUInt32BE(crc, 0);
-  return Buffer.concat([length, typeBuffer, data, crcBuffer]);
-}
-
-function crc32Buffer(data) {
-  let crc = 0xFFFFFFFF;
-  for (let i = 0; i < data.length; i++) {
-    crc ^= data[i];
-    for (let j = 0; j < 8; j++) {
-      crc = (crc & 1) ? ((crc >>> 1) ^ 0xEDB88320) : (crc >>> 1);
-    }
-  }
-  return (crc ^ 0xFFFFFFFF) >>> 0;
-}
+const iconSrc = join(ROOT, 'public', 'icon.png');
 
 const iconSizes = {
   'mipmap-mdpi': 48,
@@ -109,10 +51,10 @@ const iconSizes = {
 };
 
 for (const [dir, size] of Object.entries(iconSizes)) {
-  const png = createPNG(size, size, 108, 99, 255);
   const outDir = join(ANDROID_DIR, 'app', 'src', 'main', 'res', dir);
   mkdirSync(outDir, { recursive: true });
-  writeFileSync(join(outDir, 'ic_launcher.png'), png);
+  const outPath = join(outDir, 'ic_launcher.png');
+  execSync(`convert "${iconSrc}" -resize ${size}x${size} "${outPath}"`);
 }
 log('Icons generated.');
 
