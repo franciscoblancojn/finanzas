@@ -36,22 +36,27 @@ export function initApp() {
   setupFullscreenButton();
   setupInstallPrompt();
   setupSwipeNavigation();
+  setupAutoFullscreen();
 
   render();
+}
+
+function requestFullscreen() {
+  const el = document.documentElement;
+  if (el.requestFullscreen) {
+    return el.requestFullscreen().catch(() => {});
+  } else if (el.webkitRequestFullscreen) {
+    return el.webkitRequestFullscreen();
+  } else if (el.msRequestFullscreen) {
+    return el.msRequestFullscreen();
+  }
 }
 
 function toggleFullscreen() {
   if (document.fullscreenElement) {
     document.exitFullscreen().catch(() => {});
   } else {
-    const el = document.documentElement;
-    if (el.requestFullscreen) {
-      el.requestFullscreen().catch(() => {});
-    } else if (el.webkitRequestFullscreen) {
-      el.webkitRequestFullscreen();
-    } else if (el.msRequestFullscreen) {
-      el.msRequestFullscreen();
-    }
+    requestFullscreen();
   }
 }
 
@@ -59,6 +64,16 @@ function setupFullscreenButton() {
   const btn = document.getElementById('btn-fullscreen');
   if (!btn) return;
   btn.addEventListener('click', toggleFullscreen);
+}
+
+function setupAutoFullscreen() {
+  const enterFS = () => {
+    requestFullscreen();
+    document.removeEventListener('click', enterFS);
+    document.removeEventListener('touchend', enterFS);
+  };
+  document.addEventListener('click', enterFS);
+  document.addEventListener('touchend', enterFS);
 }
 
 function setupInstallPrompt() {
