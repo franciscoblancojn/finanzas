@@ -35,6 +35,7 @@ export function initApp() {
   setupEditExpenseListener();
   setupFullscreenButton();
   setupInstallPrompt();
+  setupSwipeNavigation();
 
   render();
 }
@@ -344,6 +345,34 @@ function setupKeyboardShortcuts() {
         break;
     }
   });
+}
+
+const SCREENS = ['expenses', 'analytics', 'settings'];
+
+function setupSwipeNavigation() {
+  let touchStartX = 0;
+  let touchStartY = 0;
+  const MIN_SWIPE = 60;
+
+  document.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+    touchStartY = e.changedTouches[0].screenY;
+  }, { passive: true });
+
+  document.addEventListener('touchend', (e) => {
+    const dx = e.changedTouches[0].screenX - touchStartX;
+    const dy = e.changedTouches[0].screenY - touchStartY;
+    if (Math.abs(dx) < MIN_SWIPE || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+    const activeModal = document.querySelector('.modal-overlay.open');
+    if (activeModal) return;
+
+    const idx = SCREENS.indexOf(currentScreen);
+    if (dx < 0 && idx < SCREENS.length - 1) {
+      switchScreen(SCREENS[idx + 1]);
+    } else if (dx > 0 && idx > 0) {
+      switchScreen(SCREENS[idx - 1]);
+    }
+  }, { passive: true });
 }
 
 function switchScreen(screen) {
