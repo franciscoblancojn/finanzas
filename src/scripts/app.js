@@ -16,6 +16,7 @@ let currentScreen = 'expenses';
 let searchValue = '';
 let sortBy = 'date';
 let sortOrder = 'desc';
+let deferredInstallPrompt = null;
 
 export function initApp() {
   appData = loadData();
@@ -33,6 +34,7 @@ export function initApp() {
   setupKeyboardShortcuts();
   setupEditExpenseListener();
   setupFullscreenButton();
+  setupInstallPrompt();
 
   render();
 }
@@ -56,6 +58,18 @@ function setupFullscreenButton() {
   const btn = document.getElementById('btn-fullscreen');
   if (!btn) return;
   btn.addEventListener('click', toggleFullscreen);
+}
+
+function setupInstallPrompt() {
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    window.deferredInstallPrompt = e;
+    document.dispatchEvent(new CustomEvent('install-ready'));
+  });
+  window.addEventListener('appinstalled', () => {
+    window.deferredInstallPrompt = null;
+    document.dispatchEvent(new CustomEvent('install-ready'));
+  });
 }
 
 function render() {

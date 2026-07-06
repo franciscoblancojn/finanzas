@@ -65,6 +65,9 @@ export function renderSettings(container, data, onChange) {
       <div class="settings-group">
         <div class="settings-group-title">Datos</div>
 
+        <button class="btn btn-secondary btn-block" id="btn-install" style="margin-bottom: 8px; display: none;">
+          📲 Instalar aplicación
+        </button>
         <button class="btn btn-secondary btn-block" id="btn-export" style="margin-bottom: 8px;">
           📤 Exportar respaldo
         </button>
@@ -102,6 +105,23 @@ export function renderSettings(container, data, onChange) {
     applyTheme(data.settings.theme);
     onChange(data);
     showToast(themeToggle.checked ? 'Tema oscuro activado' : 'Tema claro activado', 'success');
+  });
+
+  // Install app
+  const installBtn = container.querySelector('#btn-install');
+  function updateInstallBtn() {
+    installBtn.style.display = window.deferredInstallPrompt ? 'flex' : 'none';
+  }
+  updateInstallBtn();
+  document.addEventListener('install-ready', updateInstallBtn);
+  installBtn.addEventListener('click', async () => {
+    const prompt = window.deferredInstallPrompt;
+    if (!prompt) return;
+    prompt.prompt();
+    const result = await prompt.userChoice;
+    window.deferredInstallPrompt = null;
+    updateInstallBtn();
+    showToast(result.outcome === 'accepted' ? 'App instalada' : 'Instalación cancelada', 'info');
   });
 
   // Export

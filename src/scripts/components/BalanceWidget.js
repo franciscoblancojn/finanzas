@@ -38,10 +38,10 @@ export function renderBalance(container, data, year, month) {
             <span class="balance-breakdown-dot" style="background: var(--danger)"></span>
             Gastos: ${formatMoney(regularExpenses, data.settings.currency)}
           </div>
-          ${savingsExpenses ? `
+          ${savingsExpenses || monthData.savings ? `
           <div class="balance-breakdown-item">
             <span class="balance-breakdown-dot" style="background: var(--accent)"></span>
-            Ahorro: ${formatMoney(savingsExpenses, data.settings.currency)}
+            Ahorro: ${formatMoney(savingsExpenses + (monthData.savings || 0), data.settings.currency)}
           </div>` : ''}
           ${deficit ? `
           <div class="balance-breakdown-item">

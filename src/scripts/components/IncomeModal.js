@@ -26,9 +26,16 @@ export function showIncomeModal(data, year, month, onSave) {
             </div>
             <div id="income-value-error" class="form-error"></div>
           </div>
-          <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;">
-            💡 Para ahorrar, crea un gasto normal y marca la opción <strong>Es ahorro</strong>.
-          </p>
+          <div class="form-group">
+            <label class="form-label">
+              <span>Ahorro inicial</span>
+              <span style="font-weight: 400; color: var(--text-muted); font-size: 0.8rem;"> (no descuenta del balance)</span>
+            </label>
+            <div class="money-input-group">
+              <span class="currency-symbol">${currencySymbol}</span>
+              <input class="form-input" id="income-savings" type="number" step="1" min="0" placeholder="0" value="0">
+            </div>
+          </div>
           <button type="submit" class="btn btn-primary btn-block" style="margin-top: 8px;">
             Guardar y comenzar
           </button>
@@ -40,6 +47,7 @@ export function showIncomeModal(data, year, month, onSave) {
 
     const form = overlay.querySelector('#income-form');
     const valueInput = overlay.querySelector('#income-value');
+    const savingsInput = overlay.querySelector('#income-savings');
     const valueError = overlay.querySelector('#income-value-error');
 
     overlay.addEventListener('click', (e) => {
@@ -60,10 +68,11 @@ export function showIncomeModal(data, year, month, onSave) {
 
       valueError.classList.remove('visible');
       const income = roundUp(rawValue, data.settings.rounding);
+      const savings = roundUp(parseFloat(savingsInput.value) || 0, data.settings.rounding);
 
       overlay.remove();
-      if (onSave) onSave(income, 0);
-      resolve({ income, savings: 0 });
+      if (onSave) onSave(income, savings);
+      resolve({ income, savings });
     });
   });
 }

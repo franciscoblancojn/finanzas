@@ -123,6 +123,7 @@ export function recalculateAccumulatedSavings(data) {
   let total = 0;
   for (const key of Object.keys(data.months)) {
     const md = data.months[key];
+    total += md.savings || 0;
     for (const expense of md.expenses) {
       if (expense.isSavings) {
         total += expense.value;
