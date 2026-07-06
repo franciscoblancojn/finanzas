@@ -32,32 +32,30 @@ export function initApp() {
   setupSortChips();
   setupKeyboardShortcuts();
   setupEditExpenseListener();
-  setupCloseButton();
-  requestFullscreen();
+  setupFullscreenButton();
 
   render();
 }
 
-function requestFullscreen() {
-  const el = document.documentElement;
-  if (el.requestFullscreen) {
-    el.requestFullscreen().catch(() => {});
-  } else if (el.webkitRequestFullscreen) {
-    el.webkitRequestFullscreen();
-  } else if (el.msRequestFullscreen) {
-    el.msRequestFullscreen();
+function toggleFullscreen() {
+  if (document.fullscreenElement) {
+    document.exitFullscreen().catch(() => {});
+  } else {
+    const el = document.documentElement;
+    if (el.requestFullscreen) {
+      el.requestFullscreen().catch(() => {});
+    } else if (el.webkitRequestFullscreen) {
+      el.webkitRequestFullscreen();
+    } else if (el.msRequestFullscreen) {
+      el.msRequestFullscreen();
+    }
   }
 }
 
-function setupCloseButton() {
-  const btn = document.getElementById('btn-close');
+function setupFullscreenButton() {
+  const btn = document.getElementById('btn-fullscreen');
   if (!btn) return;
-  btn.addEventListener('click', () => {
-    if (document.fullscreenElement) {
-      document.exitFullscreen().catch(() => {});
-    }
-    window.close();
-  });
+  btn.addEventListener('click', toggleFullscreen);
 }
 
 function render() {

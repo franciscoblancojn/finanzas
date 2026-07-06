@@ -76,7 +76,7 @@ export function calculateBalance(data, year, month) {
   const monthData = getMonthData(data, year, month);
   const totalExpenses = monthData.expenses.reduce((sum, e) => sum + e.value, 0);
   const deficit = getDeficitForMonth(data, year, month);
-  return monthData.income - totalExpenses - monthData.savings - deficit;
+  return monthData.income - totalExpenses - deficit;
 }
 
 export function getDeficitForMonth(data, year, month) {
@@ -123,7 +123,6 @@ export function recalculateAccumulatedSavings(data) {
   let total = 0;
   for (const key of Object.keys(data.months)) {
     const md = data.months[key];
-    total += md.savings || 0;
     for (const expense of md.expenses) {
       if (expense.isSavings) {
         total += expense.value;
