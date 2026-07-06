@@ -8,6 +8,7 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build && node scripts/post-build.mjs",
+    "build:apk": "npm run build && node scripts/build-apk.mjs",
     "preview": "astro preview",
     "astro": "astro"
   },

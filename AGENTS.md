@@ -19,6 +19,18 @@ npm run build
 Output: `dist/index.html` — a single HTML file with CSS and JavaScript inlined.
 This file can be opened directly in any browser without a server.
 
+## APK (Android)
+
+Build the HTML and package it into a small APK:
+
+```
+npm run build:apk
+```
+
+Output: `dist/finanzas.apk` — a standalone Android app that loads the HTML in a WebView.
+Requirements: Java 17+ (JDK) and curl installed. The script downloads the Android SDK
+and Gradle wrapper automatically on first run.
+
 ## Architecture
 
 - `src/scripts/` — Client-side JavaScript modules

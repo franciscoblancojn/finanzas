@@ -3,6 +3,14 @@ dist/
 # generated types
 .astro/
 
+# Android
+android/.gradle/
+android/local.properties
+android/app/build/
+android/gradle/wrapper/gradle-wrapper.jar
+android/gradlew
+android/gradlew.bat
+
 # dependencies
 node_modules/
 
