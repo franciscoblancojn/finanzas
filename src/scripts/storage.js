@@ -135,11 +135,18 @@ export function recalculateAccumulatedSavings(data) {
 
 export function exportData(data) {
   const json = JSON.stringify(data, null, 2);
+  const filename = `finanzas-backup-${new Date().toISOString().slice(0, 10)}.json`;
+
+  if (window.AndroidExporter) {
+    window.AndroidExporter.downloadFile(filename, json);
+    return;
+  }
+
   const blob = new Blob([json], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `finanzas-backup-${new Date().toISOString().slice(0, 10)}.json`;
+  a.download = filename;
   a.click();
   URL.revokeObjectURL(url);
 }
