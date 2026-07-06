@@ -78,16 +78,26 @@ body {
 .screen {
   display: none;
   padding-bottom: calc(var(--bottom-nav-height) + 20px);
-  animation: fadeIn 0.3s ease;
 }
 
 .screen.active {
   display: block;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+.screen.slide-out-left {
+  animation: slideOutLeft 0.2s ease forwards;
+}
+
+.screen.slide-out-right {
+  animation: slideOutRight 0.2s ease forwards;
+}
+
+.screen.slide-in-right {
+  animation: slideInRight 0.2s ease forwards;
+}
+
+.screen.slide-in-left {
+  animation: slideInLeft 0.2s ease forwards;
 }
 
 @keyframes slideUp {
@@ -96,13 +106,23 @@ body {
 }
 
 @keyframes slideInRight {
-  from { transform: translateX(100%); }
-  to { transform: translateX(0); }
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
 }
 
 @keyframes slideOutRight {
-  from { transform: translateX(0); }
-  to { transform: translateX(100%); }
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(100%); opacity: 0; }
+}
+
+@keyframes slideInLeft {
+  from { transform: translateX(-100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideOutLeft {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(-100%); opacity: 0; }
 }
 
 @keyframes bounceIn {

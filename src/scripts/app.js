@@ -17,6 +17,7 @@ let searchValue = '';
 let sortBy = 'date';
 let sortOrder = 'desc';
 let deferredInstallPrompt = null;
+let isTransitioning = false;
 
 export function initApp() {
   appData = loadData();
@@ -33,47 +34,23 @@ export function initApp() {
   setupSortChips();
   setupKeyboardShortcuts();
   setupEditExpenseListener();
-  setupFullscreenButton();
+  setupCloseButton();
   setupInstallPrompt();
   setupSwipeNavigation();
-  setupAutoFullscreen();
 
   render();
 }
 
-function requestFullscreen() {
-  const el = document.documentElement;
-  if (el.requestFullscreen) {
-    return el.requestFullscreen().catch(() => {});
-  } else if (el.webkitRequestFullscreen) {
-    return el.webkitRequestFullscreen();
-  } else if (el.msRequestFullscreen) {
-    return el.msRequestFullscreen();
-  }
-}
-
-function toggleFullscreen() {
-  if (document.fullscreenElement) {
-    document.exitFullscreen().catch(() => {});
-  } else {
-    requestFullscreen();
-  }
-}
-
-function setupFullscreenButton() {
-  const btn = document.getElementById('btn-fullscreen');
+function setupCloseButton() {
+  const btn = document.getElementById('btn-close');
   if (!btn) return;
-  btn.addEventListener('click', toggleFullscreen);
-}
-
-function setupAutoFullscreen() {
-  const enterFS = () => {
-    requestFullscreen();
-    document.removeEventListener('click', enterFS);
-    document.removeEventListener('touchend', enterFS);
-  };
-  document.addEventListener('click', enterFS);
-  document.addEventListener('touchend', enterFS);
+  btn.addEventListener('click', () => {
+    if (window.AndroidExporter) {
+      window.AndroidExporter.closeApp();
+    } else {
+      window.close();
+    }
+  });
 }
 
 function setupInstallPrompt() {
@@ -200,12 +177,7 @@ function setupNavigation() {
     item.addEventListener('click', () => {
       const screen = item.dataset.screen;
       if (!screen) return;
-
-      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      item.classList.add('active');
-
-      currentScreen = screen;
-      render();
+      switchScreen(screen);
     });
   });
 }
@@ -391,8 +363,44 @@ function setupSwipeNavigation() {
 }
 
 function switchScreen(screen) {
+  if (screen === currentScreen || isTransitioning) return;
+  isTransitioning = true;
+
+  const oldIdx = SCREENS.indexOf(currentScreen);
+  const newIdx = SCREENS.indexOf(screen);
+  const forward = newIdx > oldIdx;
+
+  const oldEl = document.getElementById(`screen-${currentScreen}`);
+  if (!oldEl) {
+    isTransitioning = false;
+    return;
+  }
+
+  oldEl.classList.add(forward ? 'slide-out-left' : 'slide-out-right');
+
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   const navItem = document.querySelector(`.nav-item[data-screen="${screen}"]`);
-  if (navItem) navItem.click();
+  if (navItem) navItem.classList.add('active');
+
+  currentScreen = screen;
+
+  setTimeout(() => {
+    oldEl.classList.remove('slide-out-left', 'slide-out-right');
+
+    const newEl = document.getElementById(`screen-${screen}`);
+    if (newEl) {
+      newEl.classList.add(forward ? 'slide-in-right' : 'slide-in-left');
+    }
+
+    render();
+
+    setTimeout(() => {
+      if (newEl) {
+        newEl.classList.remove('slide-in-right', 'slide-in-left');
+      }
+      isTransitioning = false;
+    }, 200);
+  }, 200);
 }
 
 window.initApp = initApp;

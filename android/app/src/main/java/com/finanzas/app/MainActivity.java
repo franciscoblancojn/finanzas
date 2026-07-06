@@ -80,6 +80,10 @@ public class MainActivity extends Activity {
                     e.printStackTrace();
                 }
             }
+            @JavascriptInterface
+            public void closeApp() {
+                MainActivity.this.finish();
+            }
         }, "AndroidExporter");
 
         webView.loadUrl("file:///android_asset/finanzas.html");
