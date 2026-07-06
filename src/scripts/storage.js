@@ -76,7 +76,7 @@ export function calculateBalance(data, year, month) {
   const monthData = getMonthData(data, year, month);
   const totalExpenses = monthData.expenses.reduce((sum, e) => sum + e.value, 0);
   const deficit = getDeficitForMonth(data, year, month);
-  return monthData.income - totalExpenses - deficit + (monthData.savings || 0);
+  return monthData.income - totalExpenses - deficit - (monthData.savings || 0);
 }
 
 export function getDeficitForMonth(data, year, month) {
@@ -89,7 +89,7 @@ export function getDeficitForMonth(data, year, month) {
 
   const prevData = data.months[prevKey];
   const prevTotalExpenses = prevData.expenses.reduce((sum, e) => sum + e.value, 0);
-  const prevBalance = prevData.income - prevTotalExpenses + prevData.savings;
+  const prevBalance = prevData.income - prevTotalExpenses - prevData.savings;
 
   if (prevBalance < 0) {
     return Math.abs(prevBalance);
@@ -105,7 +105,7 @@ export function recalculateAllDeficits(data) {
     const totalExpenses = monthData.expenses.reduce((sum, e) => sum + e.value, 0);
     monthData.deficit = monthData.deficit || 0;
     const effectiveIncome = monthData.income - monthData.deficit;
-    const balance = effectiveIncome - totalExpenses + monthData.savings;
+    const balance = effectiveIncome - totalExpenses - monthData.savings;
 
     if (i + 1 < yearMonths.length) {
       const nextKey = yearMonths[i + 1];

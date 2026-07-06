@@ -66,7 +66,7 @@ export function renderAnalytics(container, data) {
     });
   });
 
-  const overallBalance = totalIncome - totalExpenses - totalSavings;
+  const overallBalance = totalIncome - totalExpenses + totalSavings;
 
   container.innerHTML = `
     <div class="analytics-container">
