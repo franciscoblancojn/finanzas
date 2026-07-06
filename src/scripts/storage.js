@@ -75,8 +75,7 @@ export function getMonthData(data, year, month) {
 export function calculateBalance(data, year, month) {
   const monthData = getMonthData(data, year, month);
   const totalExpenses = monthData.expenses.reduce((sum, e) => sum + e.value, 0);
-  const deficit = getDeficitForMonth(data, year, month);
-  return monthData.income - totalExpenses - deficit - (monthData.savings || 0);
+  return monthData.income - totalExpenses;
 }
 
 export function getDeficitForMonth(data, year, month) {

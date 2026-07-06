@@ -723,6 +723,26 @@ body {
   animation: toastOut 0.3s ease forwards;
 }
 
+.toast-action {
+  background: rgba(255,255,255,0.25);
+  border: 1px solid rgba(255,255,255,0.4);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font);
+  white-space: nowrap;
+  transition: background 0.2s;
+  margin-left: 8px;
+  flex-shrink: 0;
+}
+
+.toast-action:hover {
+  background: rgba(255,255,255,0.35);
+}
+
 /* Confirm Dialog */
 .confirm-overlay {
   position: fixed;

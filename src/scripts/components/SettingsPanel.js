@@ -127,7 +127,14 @@ export function renderSettings(container, data, onChange) {
   // Export
   container.querySelector('#btn-export').addEventListener('click', () => {
     exportData(data);
-    showToast('Respaldo exportado', 'success');
+    if (window.AndroidExporter) {
+      showToast('Respaldo exportado', 'success', 5000, {
+        label: 'Ver archivo',
+        onClick: () => window.AndroidExporter.openDownloads(),
+      });
+    } else {
+      showToast('Respaldo exportado', 'success');
+    }
   });
 
   // Import

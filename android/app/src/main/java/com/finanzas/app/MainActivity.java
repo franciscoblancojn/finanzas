@@ -1,6 +1,7 @@
 package com.finanzas.app;
 
 import android.app.Activity;
+import android.app.DownloadManager;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
@@ -83,6 +84,24 @@ public class MainActivity extends Activity {
             @JavascriptInterface
             public void closeApp() {
                 MainActivity.this.finish();
+            }
+
+            @JavascriptInterface
+            public void openDownloads() {
+                try {
+                    Intent intent = new Intent(DownloadManager.ACTION_VIEW_DOWNLOADS);
+                    MainActivity.this.startActivity(intent);
+                } catch (Exception e) {
+                    try {
+                        Intent intent = new Intent(Intent.ACTION_MAIN);
+                        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+                        intent.setPackage("com.android.documentsui");
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        MainActivity.this.startActivity(intent);
+                    } catch (Exception e2) {
+                        e2.printStackTrace();
+                    }
+                }
             }
         }, "AndroidExporter");
 

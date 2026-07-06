@@ -43,14 +43,26 @@ log('Generating app icons...');
 
 function createPNG(width, height, r, g, b) {
   const rawData = Buffer.alloc(height * (width * 4 + 1));
+  const radius = width * 0.2;
   for (let y = 0; y < height; y++) {
     rawData[y * (width * 4 + 1)] = 0;
     for (let x = 0; x < width; x++) {
       const offset = y * (width * 4 + 1) + 1 + x * 4;
-      rawData[offset] = r;
-      rawData[offset + 1] = g;
-      rawData[offset + 2] = b;
-      rawData[offset + 3] = 255;
+      const dx = x < radius ? radius - x : (x > width - radius - 1 ? x - (width - radius - 1) : 0);
+      const dy = y < radius ? radius - y : (y > height - radius - 1 ? y - (height - radius - 1) : 0);
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist > radius) {
+        rawData[offset] = 0;
+        rawData[offset + 1] = 0;
+        rawData[offset + 2] = 0;
+        rawData[offset + 3] = 0;
+      } else {
+        const t = y / height;
+        rawData[offset] = Math.round(r + (r * 0.15) * (1 - t));
+        rawData[offset + 1] = Math.round(g + (g * 0.2) * (1 - t));
+        rawData[offset + 2] = Math.round(b + (b * 0.25) * (1 - t));
+        rawData[offset + 3] = 255;
+      }
     }
   }
   const deflated = deflateSync(rawData);
