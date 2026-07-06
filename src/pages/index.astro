@@ -1,17 +1,83 @@
 ---
-
+import BaseLayout from '../layouts/BaseLayout.astro';
+import '../styles/main.css';
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout title="Finanzas">
+  <div class="app-container" id="app">
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Confirm Dialog -->
+    <div class="confirm-overlay" id="confirm-overlay">
+      <div class="confirm-dialog">
+        <div class="confirm-title" id="confirm-title"></div>
+        <div class="confirm-message" id="confirm-message"></div>
+        <div class="confirm-actions">
+          <button class="btn btn-secondary" id="confirm-cancel">Cancelar</button>
+          <button class="btn btn-primary" id="confirm-ok">Aceptar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sticky Header -->
+    <div class="sticky-header">
+      <div class="top-nav">
+        <div class="top-nav-title">💰 Finanzas</div>
+        <div class="top-nav-actions">
+          <span class="savings-badge" id="savings-badge" style="display:none">
+            🏦 <span id="savings-amount">0</span>
+          </span>
+        </div>
+      </div>
+      <div id="calendar-nav"></div>
+      <div id="balance-container"></div>
+    </div>
+
+    <!-- Screens -->
+    <div class="screen active" id="screen-expenses">
+      <!-- Search -->
+      <div class="search-bar">
+        <span class="search-icon">🔍</span>
+        <input class="search-input" id="search-input" type="text" placeholder="Buscar gastos..." autocomplete="off">
+      </div>
+
+      <!-- Sort chips -->
+      <div class="sort-bar">
+        <button class="sort-chip active" data-sort="date">Fecha</button>
+        <button class="sort-chip" data-sort="value">Valor</button>
+        <button class="sort-chip" data-sort="type">Tipo</button>
+      </div>
+
+      <!-- Expense table -->
+      <div id="expense-table-container"></div>
+    </div>
+
+    <div class="screen" id="screen-analytics"></div>
+    <div class="screen" id="screen-settings"></div>
+
+    <!-- FAB -->
+    <button class="fab" id="fab" aria-label="Agregar gasto">+</button>
+  </div>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav" aria-label="Navegación principal">
+    <button class="nav-item active" data-screen="expenses">
+      <span class="nav-item-icon">📋</span>
+      <span class="nav-item-label">Gastos</span>
+    </button>
+    <button class="nav-item" data-screen="analytics">
+      <span class="nav-item-icon">📊</span>
+      <span class="nav-item-label">Analíticas</span>
+    </button>
+    <button class="nav-item" data-screen="settings">
+      <span class="nav-item-icon">⚙️</span>
+      <span class="nav-item-label">Config</span>
+    </button>
+  </nav>
+
+  <script type="module">
+    import { initApp } from '../scripts/app.js';
+    document.addEventListener('DOMContentLoaded', initApp);
+  </script>
+</BaseLayout>

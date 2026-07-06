@@ -3,10 +3,30 @@
 When starting the dev server, use background mode:
 
 ```
-astro dev --background
+npx astro dev --background
 ```
 
-Manage the background server with `astro dev stop`, `astro dev status`, and `astro dev logs`.
+Manage the background server with `npx astro dev stop`, `npx astro dev status`, and `npx astro dev logs`.
+
+## Build
+
+The project builds to a single self-contained HTML file:
+
+```
+npm run build
+```
+
+Output: `dist/index.html` — a single HTML file with CSS and JavaScript inlined.
+This file can be opened directly in any browser without a server.
+
+## Architecture
+
+- `src/scripts/` — Client-side JavaScript modules
+- `src/scripts/components/` — UI components (Balance, ExpenseForm, Analytics, Settings, etc.)
+- `src/styles/` — CSS styles
+- `src/layouts/` — Astro layouts
+- `src/pages/` — Astro pages (single page app)
+- `scripts/` — Build tooling (post-build inlining)
 
 ## Documentation
 
