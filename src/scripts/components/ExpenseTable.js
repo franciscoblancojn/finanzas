@@ -52,13 +52,13 @@ export function renderExpenseTable(container, data, year, month, options = {}) {
         const type = typeMap[e.typeId];
         return `
           <div class="expense-item" data-id="${e.id}">
-            <div class="expense-icon">${type ? type.icon : '📌'}</div>
+            <div class="expense-icon" style="${e.isSavings ? 'background: var(--accent-light);' : ''}">${type ? type.icon : '📌'}${e.isSavings ? '<span style="font-size:0.6rem;display:block;text-align:center;">🏦</span>' : ''}</div>
             <div class="expense-info">
-              <div class="expense-type">${type ? type.name : 'Desconocido'}</div>
+              <div class="expense-type">${type ? type.name : 'Desconocido'}${e.isSavings ? ' <span class="savings-badge" style="font-size:0.65rem;padding:2px 6px;">Ahorro</span>' : ''}</div>
               ${e.description ? `<div class="expense-desc">${escHtml(e.description)}</div>` : ''}
             </div>
             <div class="expense-value">
-              <div class="expense-amount">−${formatMoney(e.value, data.settings.currency)}</div>
+              <div class="expense-amount" style="${e.isSavings ? 'color: var(--accent);' : ''}">${e.isSavings ? '' : '−'}${formatMoney(e.value, data.settings.currency)}</div>
               <div class="expense-date">${formatDate(e.date)}</div>
             </div>
           </div>

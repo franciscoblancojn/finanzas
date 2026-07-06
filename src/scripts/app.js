@@ -32,8 +32,32 @@ export function initApp() {
   setupSortChips();
   setupKeyboardShortcuts();
   setupEditExpenseListener();
+  setupCloseButton();
+  requestFullscreen();
 
   render();
+}
+
+function requestFullscreen() {
+  const el = document.documentElement;
+  if (el.requestFullscreen) {
+    el.requestFullscreen().catch(() => {});
+  } else if (el.webkitRequestFullscreen) {
+    el.webkitRequestFullscreen();
+  } else if (el.msRequestFullscreen) {
+    el.msRequestFullscreen();
+  }
+}
+
+function setupCloseButton() {
+  const btn = document.getElementById('btn-close');
+  if (!btn) return;
+  btn.addEventListener('click', () => {
+    if (document.fullscreenElement) {
+      document.exitFullscreen().catch(() => {});
+    }
+    window.close();
+  });
 }
 
 function render() {
@@ -176,6 +200,7 @@ function setupFAB() {
     openExpenseForm(appData, currentYear, currentMonth, null, (expenseOrNull, deleteId) => {
       if (deleteId) {
         monthData.expenses = monthData.expenses.filter(e => e.id !== deleteId);
+        recalculateAccumulatedSavings(appData);
         saveData(appData);
         render();
         showToast('Gasto eliminado', 'info');
@@ -189,6 +214,7 @@ function setupFAB() {
           showToast('Gasto registrado', 'success');
         }
         monthData.expenses.sort((a, b) => b.date.localeCompare(a.date));
+        recalculateAccumulatedSavings(appData);
         saveData(appData);
         render();
       }
@@ -207,6 +233,7 @@ function setupEditExpenseListener() {
     openExpenseForm(appData, year, month, expense, (expenseOrNull, deleteId) => {
       if (deleteId) {
         monthData.expenses = monthData.expenses.filter(ex => ex.id !== deleteId);
+        recalculateAccumulatedSavings(appData);
         saveData(appData);
         render();
         showToast('Gasto eliminado', 'info');
@@ -216,6 +243,7 @@ function setupEditExpenseListener() {
           monthData.expenses[existingIdx] = expenseOrNull;
         }
         monthData.expenses.sort((a, b) => b.date.localeCompare(a.date));
+        recalculateAccumulatedSavings(appData);
         saveData(appData);
         render();
         showToast('Gasto actualizado', 'success');

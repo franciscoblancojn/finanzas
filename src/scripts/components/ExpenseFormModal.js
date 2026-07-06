@@ -34,6 +34,16 @@ export function openExpenseForm(data, year, month, expenseToEdit = null, onSave)
           </div>
           <div id="expense-value-error" class="form-error"></div>
         </div>
+        <div class="form-group" style="display: flex; align-items: center; gap: 12px;">
+          <label class="toggle" style="margin: 0;">
+            <input type="checkbox" id="expense-is-savings" ${expenseToEdit?.isSavings ? 'checked' : ''}>
+            <span class="toggle-slider"></span>
+          </label>
+          <div>
+            <div style="font-weight: 600; font-size: 0.95rem;">Es ahorro</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">Se resta del balance pero se acumula</div>
+          </div>
+        </div>
         <div class="form-group">
           <label class="form-label">Fecha</label>
           <input class="form-input" id="expense-date" type="date" value="${expenseToEdit?.date || getTodayString()}" required>
@@ -98,12 +108,15 @@ export function openExpenseForm(data, year, month, expenseToEdit = null, onSave)
     valueError.classList.remove('visible');
     const roundedValue = roundUp(rawValue, data.settings.rounding);
 
+    const isSavingsCheckbox = overlay.querySelector('#expense-is-savings');
+
     const expense = {
       id: expenseToEdit?.id || generateId(),
       typeId: selectedTypeId,
       description: descInput.value.trim(),
       value: roundedValue,
       date: dateInput.value,
+      isSavings: isSavingsCheckbox ? isSavingsCheckbox.checked : false,
     };
 
     close();

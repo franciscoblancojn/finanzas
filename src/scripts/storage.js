@@ -122,7 +122,13 @@ export function recalculateAllDeficits(data) {
 export function recalculateAccumulatedSavings(data) {
   let total = 0;
   for (const key of Object.keys(data.months)) {
-    total += data.months[key].savings || 0;
+    const md = data.months[key];
+    total += md.savings || 0;
+    for (const expense of md.expenses) {
+      if (expense.isSavings) {
+        total += expense.value;
+      }
+    }
   }
   data.accumulatedSavings = total;
 }

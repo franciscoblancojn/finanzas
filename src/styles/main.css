@@ -38,15 +38,15 @@
 [data-theme="dark"] {
   --bg-primary: #0f0f1a;
   --bg-secondary: #1a1a2e;
-  --bg-tertiary: #252540;
+  --bg-tertiary: #2a2a45;
   --text-primary: #e8e8f0;
   --text-secondary: #a0a0b8;
   --text-muted: #6c6c8a;
-  --border-color: #2a2a45;
+  --border-color: #3a3a55;
   --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
   --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
   --shadow-lg: 0 8px 24px rgba(0,0,0,0.5);
-  --accent-light: #1a1a3e;
+  --accent-light: #2a2a5e;
   --success-bg: #0d2d1a;
   --danger-bg: #2d0d0d;
   --warning-bg: #2d2a0d;
@@ -901,16 +901,22 @@ body {
   cursor: pointer;
   transition: all var(--transition);
   border: 1.5px solid transparent;
+  color: var(--text-primary);
 }
 
 .type-tag:hover {
   border-color: var(--accent);
+  background: var(--accent-light);
 }
 
 .type-tag.selected {
-  background: var(--accent-light);
+  background: var(--accent);
   border-color: var(--accent);
-  color: var(--accent);
+  color: #ffffff;
+}
+
+.type-tag.selected:hover {
+  background: var(--accent-hover);
 }
 
 .type-tag-edit {
